@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Month 5</title>
+    <style>
+        :root {
+            --bg-color: #030508;
+            --text-color: #e3dbce;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100vh; /* Fallback for older browsers/local previews */
+            height: 100dvh; /* Modern mobile height */
+            background-color: var(--bg-color);
+            font-family: 'Georgia', serif;
+            color: var(--text-color);
+            overflow: hidden;
+            display: grid;
+            place-items: center;
+            perspective: 1200px;
+        }
+
+        #loader {
+            position: absolute;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            opacity: 0.5;
+            transition: opacity 0.5s ease;
+            z-index: 30;
+        }
+
+        #doors-container {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            z-index: 20;
+            display: none; 
+            width: 100%;
+            height: 100%;
+        }
+
+        .door {
+            width: 50%;
+            height: 100%;
+            /* Lightened the doors slightly so they don't blend into pure black */
+            background: linear-gradient(to right, #111114, #050507);
+            position: relative;
+            transition: transform 3.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 3.5s ease;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.9);
+            will-change: transform;
+        }
+
+        .door.left {
+            transform-origin: left center;
+            border-right: 1px solid rgba(227, 219, 206, 0.2);
+            box-shadow: 2px 0 20px rgba(227, 219, 206, 0.1);
+        }
+
+        .door.right {
+            transform-origin: right center;
+            border-left: 1px solid rgba(227, 219, 206, 0.2);
+            background: linear-gradient(to left, #111114, #050507);
+            box-shadow: -2px 0 20px rgba(227, 219, 206, 0.1);
+        }
+
+        .door.left.open { transform: rotateY(-110deg); opacity: 0; }
+        .door.right.open { transform: rotateY(110deg); opacity: 0; }
+
+        .open-trigger {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 25;
+            background: transparent;
+            color: #ffffff; /* Made text pure white to ensure visibility */
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 15px 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            animation: softPulse 3s infinite alternate;
+            outline: none;
+            border-radius: 4px;
+        }
+
+        @keyframes softPulse {
+            0% { opacity: 0.5; box-shadow: 0 0 10px rgba(255,255,255,0.1); }
+            100% { opacity: 1; box-shadow: 0 0 25px rgba(255,255,255,0.3); }
+        }
+
+        #cinematic-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            filter: blur(5px);
+            transition: filter 5s ease-in-out;
+            will-change: filter;
+        }
+
+        #particle-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 4s ease;
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(3,5,8,1) 15%, rgba(3,5,8,0.4) 100%);
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        #story-text {
+            position: absolute;
+            width: 85%;
+            max-width: 700px;
+            text-align: center;
+            font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+            line-height: 2;
+            letter-spacing: 1px;
+            text-shadow: 0px 4px 20px rgba(0,0,0,1);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 2.5s ease-in-out, transform 2.5s ease-in-out;
+            z-index: 4;
+            will-change: opacity, transform;
+            pointer-events: none;
+        }
+        
+        #story-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">Loading Environment...</div>
+
+    <div id="doors-container">
+        <div class="door left" id="door-left"></div>
+        <div class="door right" id="door-right"></div>
+        <button class="open-trigger" id="enterBtn">Tap to open</button>
+    </div>
+
+    <!-- Ensure your video is named EXACTLY "balcony-mobile.mp4" in the same folder -->
+    <video id="cinematic-bg" muted loop playsinline preload="auto">
+        <source src="balcony-mobile.mp4" type="video/mp4">
+    </video>
+    
+    <canvas id="particle-canvas"></canvas>
+    <div class="overlay"></div>
+
+    <div id="story-text"></div>
+
+    <!-- Ensure your audio is named EXACTLY "ambient.mp3" in the same folder -->
+    <audio id="ambientAudio" loop preload="auto">
+        <source src="ambient.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const bgVideo = document.getElementById('cinematic-bg');
+        let doorsShown = false;
+        
+        function showDoors() {
+            if (doorsShown) return;
+            doorsShown = true;
+            
+            document.getElementById('loader').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('doors-container').style.display = 'flex';
+            }, 500);
+        }
+
+        if (bgVideo.readyState >= 3) {
+            showDoors();
+        } else {
+            bgVideo.addEventListener('canplaythrough', showDoors, { once: true });
+        }
+
+        // FAILSAFE: Force the doors to show after 1.5 seconds even if the video is missing or blocked
+        setTimeout(showDoors, 1500);
+
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class DustParticle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.2;
+                this.speedY = (Math.random() * 0.2) - 0.1;
+                this.speedX = (Math.random() * 0.2) - 0.1;
+                this.opacity = Math.random() * 0.4;
+            }
+            update() {
+                this.y -= this.speedY;
+                this.x += this.speedX;
+                if (this.y < 0) this.y = canvas.height;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.x > canvas.width) this.x = 0;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(227, 219, 206, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            for (let i = 0; i < 40; i++) particles.push(new DustParticle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animateParticles);
+        }
+
+        const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+        const storyLines = [
+            "Five months ago, a spark lit up the dark.",
+            "I found my angel, and my entire gravity shifted.",
+            "Since then, time has felt like the tide...",
+            "...steady, deep, and pulling me closer to you.",
+            "I know you are stuck in bed tonight.",
+            "So I built this quiet place for you to rest.",
+            "Close your eyes. Listen to the water.",
+            "Every passing month is a step toward our future.",
+            "Happy 5 Months, Pia.",
+            "I'll see you in Italy."
+        ];
+
+        document.getElementById('enterBtn').addEventListener('click', async function() {
+            this.style.opacity = '0';
+            this.style.pointerEvents = 'none';
+            
+            document.getElementById('door-left').classList.add('open');
+            document.getElementById('door-right').classList.add('open');
+
+            // CRASH-PROOF: We catch the error if your browser blocks the video, so the script doesn't die.
+            bgVideo.play().catch(e => console.warn("Video blocked locally, but story will continue."));
+            bgVideo.style.filter = 'blur(0px)';
+
+            initParticles();
+            animateParticles();
+            canvas.style.opacity = '1';
+
+            const audio = document.getElementById('ambientAudio');
+            audio.volume = 0;
+            // CRASH-PROOF: Same for audio
+            audio.play().catch(e => console.warn("Audio blocked locally, but story will continue."));
+            
+            let fadeInterval = setInterval(() => {
+                if (audio.volume < 0.4) {
+                    audio.volume = Math.min(audio.volume + 0.02, 0.4);
+                } else {
+                    clearInterval(fadeInterval);
+                }
+            }, 200);
+
+            setTimeout(() => {
+                document.getElementById('doors-container').style.display = 'none';
+            }, 4000);
+
+            await sleep(3500); 
+            
+            const textBox = document.getElementById('story-text');
+            
+            for (let line of storyLines) {
+                textBox.innerHTML = line;
+                textBox.classList.add('visible');
+                
+                await sleep(5000); 
+                
+                textBox.classList.remove('visible');
+                
+                await sleep(2500); 
+            }
+        });
+    </script>
+</body>
+</html>
