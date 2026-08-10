@@ -3,97 +3,325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Month 5</title>
+    <title>Five Months</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=EB+Garamond:ital,wght@0,400;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #030508;
+            --bg-color-2: #060a12;
             --text-color: #e3dbce;
+            --ember: #e8a15c;
+            --ember-soft: #f0c393;
+            --display-font: 'Cormorant Garamond', 'Georgia', serif;
+            --body-font: 'EB Garamond', 'Georgia', serif;
+            --hand-font: 'Caveat', 'Georgia', cursive;
         }
+
+        * { box-sizing: border-box; }
 
         body, html {
             margin: 0;
             padding: 0;
-            height: 100vh; /* Fallback for older browsers/local previews */
-            height: 100dvh; /* Modern mobile height */
+            height: 100vh;
+            height: 100dvh;
             background-color: var(--bg-color);
-            font-family: 'Georgia', serif;
+            font-family: var(--body-font);
             color: var(--text-color);
             overflow: hidden;
             display: grid;
             place-items: center;
-            perspective: 1200px;
         }
 
-        #loader {
-            position: absolute;
-            font-size: 0.9rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            opacity: 0.5;
-            transition: opacity 0.5s ease;
-            z-index: 30;
-        }
-
-        #doors-container {
+        /* ============ LANDING SCREEN ============ */
+        #landing {
             position: absolute;
             inset: 0;
-            display: flex;
             z-index: 20;
-            display: none; 
-            width: 100%;
-            height: 100%;
+            display: grid;
+            place-items: center;
+            background: radial-gradient(ellipse at 50% 55%, var(--bg-color-2) 0%, var(--bg-color) 70%);
+            transition: opacity 1.6s ease, filter 1.6s ease;
         }
 
-        .door {
-            width: 50%;
-            height: 100%;
-            /* Lightened the doors slightly so they don't blend into pure black */
-            background: linear-gradient(to right, #111114, #050507);
-            position: relative;
-            transition: transform 3.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 3.5s ease;
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.9);
-            will-change: transform;
+        #landing.leaving {
+            opacity: 0;
+            filter: blur(6px);
+            pointer-events: none;
         }
 
-        .door.left {
-            transform-origin: left center;
-            border-right: 1px solid rgba(227, 219, 206, 0.2);
-            box-shadow: 2px 0 20px rgba(227, 219, 206, 0.1);
-        }
-
-        .door.right {
-            transform-origin: right center;
-            border-left: 1px solid rgba(227, 219, 206, 0.2);
-            background: linear-gradient(to left, #111114, #050507);
-            box-shadow: -2px 0 20px rgba(227, 219, 206, 0.1);
-        }
-
-        .door.left.open { transform: rotateY(-110deg); opacity: 0; }
-        .door.right.open { transform: rotateY(110deg); opacity: 0; }
-
-        .open-trigger {
+        /* ============ LANGUAGE SELECT SCREEN ============ */
+        #lang-select {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 25;
-            background: transparent;
-            color: #ffffff; /* Made text pure white to ensure visibility */
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 15px 30px;
-            font-size: 1rem;
-            cursor: pointer;
+            inset: 0;
+            z-index: 30;
+            display: grid;
+            place-items: center;
+            background: radial-gradient(ellipse at 50% 55%, var(--bg-color-2) 0%, var(--bg-color) 70%);
+            transition: opacity 1.2s ease, filter 1.2s ease;
+        }
+
+        #lang-select.leaving {
+            opacity: 0;
+            filter: blur(6px);
+            pointer-events: none;
+        }
+
+        #landing.awaiting-language {
+            display: none;
+        }
+
+        .lang-select-content {
+            width: 100%;
+            max-width: 480px;
+            box-sizing: border-box;
+            text-align: center;
+            padding: 0 8vw;
+        }
+
+        .lang-eyebrow {
+            font-family: var(--body-font);
+            font-size: 0.72rem;
             letter-spacing: 4px;
             text-transform: uppercase;
-            animation: softPulse 3s infinite alternate;
-            outline: none;
-            border-radius: 4px;
+            color: rgba(227, 219, 206, 0.55);
+            margin: 0 0 2.6rem;
+            overflow-wrap: break-word;
         }
 
-        @keyframes softPulse {
-            0% { opacity: 0.5; box-shadow: 0 0 10px rgba(255,255,255,0.1); }
-            100% { opacity: 1; box-shadow: 0 0 25px rgba(255,255,255,0.3); }
+        .globe-options {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 3.5rem;
+            flex-wrap: wrap;
         }
+
+        .globe-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.9rem;
+            padding: 0;
+        }
+
+        .globe-icon {
+            width: 62px;
+            height: 62px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(255,255,255,0.25);
+            color: rgba(227, 219, 206, 0.85);
+            transition: border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease;
+            animation: envelopeGlow 3.4s ease-in-out infinite;
+        }
+
+        .globe-icon svg { width: 26px; height: 26px; }
+
+        .globe-btn:hover .globe-icon,
+        .globe-btn:focus-visible .globe-icon {
+            border-color: var(--ember-soft);
+            color: var(--ember-soft);
+            transform: scale(1.06);
+        }
+
+        .globe-label {
+            font-family: var(--body-font);
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(227, 219, 206, 0.75);
+            transition: color 0.4s ease;
+            overflow-wrap: break-word;
+        }
+
+        .globe-btn:hover .globe-label,
+        .globe-btn:focus-visible .globe-label {
+            color: var(--ember-soft);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .globe-icon { transition: none; animation: none; }
+        }
+
+        .landing-photo {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            opacity: 0;
+            filter: saturate(0.85) brightness(0.7);
+            transition: opacity 4s ease 0.4s;
+        }
+
+        .landing-photo.visible {
+            opacity: 0.35;
+        }
+
+        .landing-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: radial-gradient(ellipse at 50% 55%, rgba(6,10,18,0.5) 0%, var(--bg-color) 78%);
+            pointer-events: none;
+        }
+
+        #ember-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .landing-content {
+            position: relative;
+            z-index: 3;
+            width: 100%;
+            max-width: 640px;
+            box-sizing: border-box;
+            text-align: center;
+            padding: 0 8vw;
+        }
+
+        /* The spark: two layered elements, one for entrance, one for the ongoing breathing glow */
+        .spark-wrap {
+            position: relative;
+            width: 10px;
+            height: 10px;
+            margin: 0 auto 2.2rem;
+        }
+
+        .spark-core {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: var(--ember-soft);
+            opacity: 0;
+            transform: scale(0);
+            animation: sparkIgnite 1.8s ease-out forwards,
+                       sparkPulse 3.2s ease-in-out infinite 1.8s;
+        }
+
+        @keyframes sparkIgnite {
+            0%   { opacity: 0; transform: scale(0); }
+            45%  { opacity: 1; transform: scale(2.2); }
+            70%  { opacity: 0.9; transform: scale(1); }
+            100% { opacity: 0.85; transform: scale(1); }
+        }
+
+        @keyframes sparkPulse {
+            0%, 100% { box-shadow: 0 0 8px 2px rgba(232,161,92,0.5), 0 0 24px 8px rgba(232,161,92,0.15); }
+            50%      { box-shadow: 0 0 14px 4px rgba(232,161,92,0.75), 0 0 40px 14px rgba(232,161,92,0.25); }
+        }
+
+        .eyebrow {
+            font-family: var(--body-font);
+            font-size: 0.72rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: rgba(227, 219, 206, 0.55);
+            margin: 0 0 0.9rem;
+            opacity: 0;
+            overflow-wrap: break-word;
+            animation: revealUp 1.4s ease forwards;
+            animation-delay: 1.7s;
+        }
+
+        .eyebrow .num {
+            color: var(--ember-soft);
+            font-family: var(--display-font);
+            font-style: italic;
+        }
+
+        .landing-title {
+            font-family: var(--display-font);
+            font-weight: 500;
+            font-size: clamp(2.2rem, 9vw, 4.6rem);
+            letter-spacing: 1px;
+            margin: 0 0 0.6rem;
+            line-height: 1.05;
+            opacity: 0;
+            overflow-wrap: break-word;
+            animation: revealUp 1.6s ease forwards;
+            animation-delay: 2.1s;
+        }
+
+        .landing-sub {
+            font-family: var(--display-font);
+            font-style: italic;
+            font-weight: 400;
+            font-size: clamp(1rem, 2.6vw, 1.25rem);
+            color: rgba(227, 219, 206, 0.75);
+            margin: 0 0 3rem;
+            opacity: 0;
+            overflow-wrap: break-word;
+            animation: revealUp 1.6s ease forwards;
+            animation-delay: 2.6s;
+        }
+
+        @keyframes revealUp {
+            0%   { opacity: 0; transform: translateY(14px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .enter-link {
+            position: relative;
+            z-index: 10;
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-family: var(--body-font);
+            font-size: 0.85rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            padding: 0.6rem 0.2rem;
+            max-width: 100%;
+            white-space: normal;
+            overflow-wrap: break-word;
+            opacity: 0;
+            animation: revealUp 1.6s ease forwards, heartbeat 2.6s ease-in-out infinite 4.5s;
+            animation-delay: 3.2s, 4.5s;
+        }
+
+        .enter-link .rule {
+            display: block;
+            width: 34px;
+            height: 1px;
+            background: rgba(255,255,255,0.4);
+            margin: 10px auto 0;
+            transition: width 0.5s ease, background 0.5s ease;
+        }
+
+        .enter-link:hover .rule {
+            width: 64px;
+            background: var(--ember-soft);
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            10%      { transform: scale(1.05); }
+            20%      { transform: scale(1); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .spark-core, .eyebrow, .landing-title, .landing-sub, .enter-link {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+        }
+
+        /* ============ MAIN SCENE (video story) ============ */
 
         #cinematic-bg {
             position: absolute;
@@ -102,9 +330,9 @@
             height: 100%;
             object-fit: cover;
             z-index: 1;
-            filter: blur(5px);
-            transition: filter 5s ease-in-out;
-            will-change: filter;
+            opacity: 0;
+            filter: blur(10px);
+            transition: opacity 4s ease-in-out, filter 4s ease-in-out;
         }
 
         #particle-canvas {
@@ -115,7 +343,35 @@
             z-index: 2;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 4s ease;
+            transition: opacity 3s ease;
+        }
+
+        /* Photo interludes: fade in behind the story text at chosen moments */
+        #photo-layer {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        #photo-layer img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            filter: saturate(0.9) brightness(0.85);
+            transform: scale(1.04);
+            transition: opacity 3s ease, transform 6s ease;
+        }
+
+        #photo-layer img.visible {
+            opacity: 0.55;
+            transform: scale(1);
         }
 
         .overlay {
@@ -131,73 +387,487 @@
             width: 85%;
             max-width: 700px;
             text-align: center;
-            font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+            font-family: var(--display-font);
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
             line-height: 2;
             letter-spacing: 1px;
             text-shadow: 0px 4px 20px rgba(0,0,0,1);
+            overflow-wrap: break-word;
             opacity: 0;
             transform: translateY(10px);
-            transition: opacity 2.5s ease-in-out, transform 2.5s ease-in-out;
-            z-index: 4;
-            will-change: opacity, transform;
+            transition: opacity 2.5s ease, transform 2.5s ease;
+            z-index: 5;
             pointer-events: none;
         }
-        
+
         #story-text.visible {
             opacity: 1;
             transform: translateY(0);
+        }
+
+        /* ============ CLOSING CARD (after the last story line) ============ */
+        #closing {
+            position: absolute;
+            inset: 0;
+            z-index: 6;
+            display: grid;
+            place-items: center;
+            background: radial-gradient(ellipse at 50% 55%, var(--bg-color-2) 0%, var(--bg-color) 70%);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 2.5s ease;
+        }
+
+        #closing.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .closing-photo {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            opacity: 0;
+            filter: saturate(0.85) brightness(0.75);
+            transition: opacity 3.5s ease;
+        }
+
+        #closing.visible .closing-photo {
+            opacity: 0.4;
+        }
+
+        .closing-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: radial-gradient(ellipse at 50% 55%, rgba(6,10,18,0.55) 0%, var(--bg-color) 78%);
+            pointer-events: none;
+        }
+
+        #closing-ember-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .closing-content {
+            position: relative;
+            z-index: 3;
+            width: 100%;
+            max-width: 640px;
+            box-sizing: border-box;
+            text-align: center;
+            padding: 0 8vw;
+        }
+
+        /* Reuse the spark motif, but only animate once #closing has .visible */
+        #closing .spark-core {
+            opacity: 0;
+            transform: scale(0);
+            animation: none;
+        }
+
+        #closing.visible .spark-core {
+            animation: sparkIgnite 1.6s ease-out forwards,
+                       sparkPulse 3.2s ease-in-out infinite 1.6s;
+        }
+
+        #closing .closing-eyebrow,
+        #closing .closing-title,
+        #closing .closing-sub,
+        #closing .replay-link {
+            opacity: 0;
+        }
+
+        #closing.visible .closing-eyebrow {
+            animation: revealUp 1.4s ease forwards;
+            animation-delay: 0.4s;
+        }
+
+        #closing.visible .closing-title {
+            animation: revealUp 1.6s ease forwards;
+            animation-delay: 0.8s;
+        }
+
+        #closing.visible .closing-sub {
+            animation: revealUp 1.6s ease forwards;
+            animation-delay: 1.3s;
+        }
+
+        #closing.visible .replay-link {
+            animation: revealUp 1.6s ease forwards;
+            animation-delay: 1.9s;
+        }
+
+        .closing-eyebrow {
+            font-family: var(--body-font);
+            font-size: 0.72rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: rgba(227, 219, 206, 0.55);
+            margin: 0 0 0.9rem;
+            overflow-wrap: break-word;
+        }
+
+        .closing-title {
+            font-family: var(--display-font);
+            font-weight: 500;
+            font-size: clamp(1.7rem, 6vw, 3rem);
+            letter-spacing: 1px;
+            margin: 0 0 0.8rem;
+            line-height: 1.25;
+            overflow-wrap: break-word;
+        }
+
+        .closing-sub {
+            font-family: var(--display-font);
+            font-style: italic;
+            font-weight: 400;
+            font-size: clamp(1rem, 2.6vw, 1.2rem);
+            color: rgba(227, 219, 206, 0.75);
+            margin: 0 0 2.6rem;
+            overflow-wrap: break-word;
+        }
+
+        .replay-link {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-family: var(--body-font);
+            font-size: 0.78rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            cursor: pointer;
+            padding: 0.5rem 0.2rem;
+            max-width: 100%;
+            white-space: normal;
+            overflow-wrap: break-word;
+        }
+
+        .replay-link .rule {
+            display: block;
+            width: 26px;
+            height: 1px;
+            background: rgba(255,255,255,0.35);
+            margin: 8px auto 0;
+            transition: width 0.5s ease, background 0.5s ease;
+        }
+
+        .replay-link:hover {
+            color: #ffffff;
+        }
+
+        .replay-link:hover .rule {
+            width: 50px;
+            background: var(--ember-soft);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #closing .spark-core, .closing-eyebrow, .closing-title, .closing-sub, .replay-link, .envelope-btn {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+        }
+
+        /* ============ ENVELOPE + LETTER ============ */
+        .closing-footer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.6rem;
+            margin-top: 1.6rem;
+            opacity: 0;
+        }
+
+        #closing.visible .closing-footer {
+            animation: revealUp 1.6s ease forwards;
+            animation-delay: 2.3s;
+        }
+
+        .envelope-btn {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            color: rgba(227, 219, 206, 0.85);
+            transition: border-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease;
+            animation: envelopeGlow 3.4s ease-in-out infinite;
+        }
+
+        .envelope-btn svg { width: 18px; height: 18px; }
+
+        .envelope-btn:hover {
+            border-color: var(--ember-soft);
+            color: var(--ember-soft);
+        }
+
+        @keyframes envelopeGlow {
+            0%, 100% { box-shadow: 0 0 0 rgba(232,161,92,0); }
+            50%      { box-shadow: 0 0 12px 2px rgba(232,161,92,0.18); }
+        }
+
+        #letter-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            display: grid;
+            place-items: center;
+            background: rgba(3, 5, 8, 0.86);
+            backdrop-filter: blur(4px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s ease;
+            padding: 6vh 5vw;
+        }
+
+        #letter-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .letter-paper {
+            position: relative;
+            width: min(560px, 100%);
+            max-height: 82vh;
+            overflow-y: auto;
+            background: #f4ecd8;
+            color: #2b2013;
+            border-radius: 3px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            padding: 3.2rem 3rem 2.6rem;
+            transform: translateY(18px) scale(0.97);
+            opacity: 0;
+            transition: transform 0.6s ease, opacity 0.6s ease;
+        }
+
+        #letter-overlay.visible .letter-paper {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+
+        .letter-close {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            line-height: 1;
+            color: rgba(43, 32, 19, 0.5);
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        .letter-close:hover { color: rgba(43, 32, 19, 0.9); }
+
+        .letter-text {
+            font-family: var(--hand-font);
+            font-size: clamp(1.3rem, 3vw, 1.55rem);
+            line-height: 1.65;
+            overflow-wrap: break-word;
+        }
+
+        .letter-text p {
+            margin: 0 0 1.1rem;
+        }
+
+        .letter-text .signature {
+            margin-top: 1.6rem;
+            font-size: clamp(1.5rem, 3.4vw, 1.8rem);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .envelope-btn { animation: none; }
         }
     </style>
 </head>
 <body>
 
-    <div id="loader">Loading Environment...</div>
-
-    <div id="doors-container">
-        <div class="door left" id="door-left"></div>
-        <div class="door right" id="door-right"></div>
-        <button class="open-trigger" id="enterBtn">Tap to open</button>
+    <!-- ============ LANGUAGE SELECT ============ -->
+    <div id="lang-select">
+        <div class="lang-select-content">
+            <p class="lang-eyebrow">choose your language &nbsp;·&nbsp; elegí tu idioma</p>
+            <div class="globe-options">
+                <button class="globe-btn" type="button" data-lang="en" aria-label="English">
+                    <span class="globe-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <path d="M12 3c2.5 2.5 3.8 5.8 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.8-3.8-9s1.3-6.5 3.8-9z"></path>
+                        </svg>
+                    </span>
+                    <span class="globe-label">English</span>
+                </button>
+                <button class="globe-btn" type="button" data-lang="es" aria-label="Español (Argentina)">
+                    <span class="globe-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <path d="M12 3c2.5 2.5 3.8 5.8 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.8-3.8-9s1.3-6.5 3.8-9z"></path>
+                        </svg>
+                    </span>
+                    <span class="globe-label">Español (AR)</span>
+                </button>
+            </div>
+        </div>
     </div>
 
-    <!-- Ensure your video is named EXACTLY "balcony-mobile.mp4" in the same folder -->
-    <video id="cinematic-bg" muted loop playsinline preload="auto">
+    <!-- ============ LANDING ============ -->
+    <div id="landing" class="awaiting-language">
+        <!-- EDIT ME: your generated photo goes here, or delete this line to keep it plain black -->
+        <img class="landing-photo" id="landingPhoto" src="landing-photo.jpg" alt="">
+        <div class="landing-overlay"></div>
+        <canvas id="ember-canvas"></canvas>
+        <div class="landing-content">
+            <div class="spark-wrap"><div class="spark-core"></div></div>
+            <p class="eyebrow"><span class="num">five</span> &nbsp;·&nbsp; months together</p>
+            <h1 class="landing-title">Happy Monthsary</h1>
+            <p class="landing-sub">a quiet place, just for you</p>
+            <button id="enterBtn" class="enter-link">Feel My Sincere Love<span class="rule"></span></button>
+        </div>
+    </div>
+
+    <!-- ============ MAIN SCENE ============ -->
+    <video id="cinematic-bg" muted loop playsinline>
         <source src="balcony-mobile.mp4" type="video/mp4">
     </video>
-    
+
+    <div id="photo-layer"><img id="photo-img" src="" alt=""></div>
     <canvas id="particle-canvas"></canvas>
     <div class="overlay"></div>
 
     <div id="story-text"></div>
 
-    <!-- Ensure your audio is named EXACTLY "ambient.mp3" in the same folder -->
-    <audio id="ambientAudio" loop preload="auto">
+    <!-- ============ CLOSING CARD ============ -->
+    <div id="closing">
+        <!-- EDIT ME: put a favorite photo here, or delete this line if you'd rather keep it plain -->
+        <img class="closing-photo" src="balcony-view.png" alt="">
+        <div class="closing-overlay"></div>
+        <canvas id="closing-ember-canvas"></canvas>
+        <div class="closing-content">
+            <div class="spark-wrap"><div class="spark-core"></div></div>
+            <p class="closing-eyebrow">i'll die for you</p>
+            <!-- EDIT ME: this is the line that closes the site -->
+            <h2 class="closing-title" id="closingTitle">Until the next month, my true love.</h2>
+            <p class="closing-sub">— I Love You, Pia</p>
+            <div class="closing-footer">
+                <button id="replayBtn" class="replay-link">Replay<span class="rule"></span></button>
+                <button id="envelopeBtn" class="envelope-btn" aria-label="Open the letter" title="Open the letter">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2.5" y="5" width="19" height="14" rx="1.5"></rect>
+                        <path d="M3 6.5l9 6.5 9-6.5"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ LETTER ============ -->
+    <div id="letter-overlay">
+        <div class="letter-paper">
+            <button id="letterClose" class="letter-close" aria-label="Close letter">&times;</button>
+            <!-- EDIT ME: replace this with your actual letter, one <p> per paragraph -->
+            <div class="letter-text">
+                <p>My Pia,</p>
+                <p>Five months in, and I still catch myself smiling at my phone like an idiot when your name pops up. I don't think that's going to stop anytime soon.</p>
+                <p>I built this whole quiet corner of the internet because I wanted you to have somewhere to land on a night when you're stuck in bed and everything feels heavier than it should. I wanted you to close your eyes and feel like I was right there next to you, even from far away.</p>
+                <p>Thank you for five months of choosing this, choosing us, even when it's hard. I don't take that lightly.</p>
+                <p>I'll see you soon. and I'll see you in my Dreams.</p>
+                <p class="signature">Always yours, Pia</p>
+            </div>
+        </div>
+    </div>
+
+    <audio id="ambientAudio" loop>
         <source src="ambient.mp3" type="audio/mpeg">
     </audio>
 
+    <!-- Soft chime played once, the first time Begin is pressed -->
+    <audio id="chimeSound">
+        <source src="chime.mp3" type="audio/mpeg">
+    </audio>
+
     <script>
-        const bgVideo = document.getElementById('cinematic-bg');
-        let doorsShown = false;
-        
-        function showDoors() {
-            if (doorsShown) return;
-            doorsShown = true;
-            
-            document.getElementById('loader').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('doors-container').style.display = 'flex';
-            }, 500);
+        // ============ Ember particle engine (reused for landing + closing) ============
+        class Ember {
+            constructor(width, height) {
+                this.w = width;
+                this.h = height;
+                this.reset(true);
+            }
+            reset(initial) {
+                this.x = Math.random() * this.w;
+                this.y = initial ? Math.random() * this.h : this.h + 10;
+                this.size = Math.random() * 1.6 + 0.4;
+                this.speedY = Math.random() * 0.25 + 0.08;
+                this.drift = (Math.random() * 0.3) - 0.15;
+                this.baseOpacity = Math.random() * 0.5 + 0.15;
+                this.flicker = Math.random() * Math.PI * 2;
+            }
+            update() {
+                this.y -= this.speedY;
+                this.x += this.drift + Math.sin(this.flicker) * 0.05;
+                this.flicker += 0.02;
+                if (this.y < -10) this.reset(false);
+            }
+            draw(ctx) {
+                const o = this.baseOpacity * (0.6 + 0.4 * Math.sin(this.flicker));
+                ctx.fillStyle = `rgba(232, 161, 92, ${o})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
         }
 
-        if (bgVideo.readyState >= 3) {
-            showDoors();
-        } else {
-            bgVideo.addEventListener('canplaythrough', showDoors, { once: true });
+        function createEmberField(canvasEl, count) {
+            const ctx = canvasEl.getContext('2d');
+            let embers = [];
+            let running = false;
+            let frameId = null;
+
+            function resize() {
+                canvasEl.width = window.innerWidth;
+                canvasEl.height = window.innerHeight;
+                embers.forEach(e => { e.w = canvasEl.width; e.h = canvasEl.height; });
+            }
+
+            function seed() {
+                embers = [];
+                for (let i = 0; i < count; i++) embers.push(new Ember(canvasEl.width, canvasEl.height));
+            }
+
+            function loop() {
+                if (!running) return;
+                ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+                embers.forEach(e => { e.update(); e.draw(ctx); });
+                frameId = requestAnimationFrame(loop);
+            }
+
+            resize();
+            seed();
+            window.addEventListener('resize', resize);
+
+            return {
+                start() { if (running) return; running = true; loop(); },
+                stop() { running = false; if (frameId) cancelAnimationFrame(frameId); }
+            };
         }
 
-        // FAILSAFE: Force the doors to show after 1.5 seconds even if the video is missing or blocked
-        setTimeout(showDoors, 1500);
+        const landingEmbers = createEmberField(document.getElementById('ember-canvas'), 34);
+        const closingEmbers = createEmberField(document.getElementById('closing-ember-canvas'), 34);
+        landingEmbers.start();
 
+        // ============ Dust particle engine (main scene, after Begin) ============
         const canvas = document.getElementById('particle-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -233,9 +903,7 @@
             }
         }
 
-        function initParticles() {
-            for (let i = 0; i < 40; i++) particles.push(new DustParticle());
-        }
+        for (let i = 0; i < 40; i++) particles.push(new DustParticle());
 
         function animateParticles() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -243,66 +911,350 @@
             requestAnimationFrame(animateParticles);
         }
 
+        // ============ Photo interludes ============
+        // Map the index (0-based) of a line in storyLines to a photo file to show
+        // behind it. Not every line needs one — leave gaps for lines that should
+        // stay on plain black. If you reorder storyLines, update these indices too.
+        // EDIT ME:
+        const photoCues = {
+            3: 'photo-1.jpg',   // "Five months ago, a spark lit up the dark."
+            8: 'photo-2.jpg'    // "Happy 5 Months, Pia."
+        };
+
+        const photoImg = document.getElementById('photo-img');
+        let currentPhoto = null;
+
+        function showPhoto(src) {
+            if (currentPhoto === src) return;
+            currentPhoto = src;
+            photoImg.src = src;
+            photoImg.classList.add('visible');
+        }
+
+        function hidePhoto() {
+            currentPhoto = null;
+            photoImg.classList.remove('visible');
+        }
+
+        // ============ Audio mood ramps ============
+        // Smoothly glides an audio element's volume and playback rate to new
+        // targets over `duration` ms, so each phase (landing/story/closing)
+        // gets its own subtle mood from the same single track.
+        function rampAudio(audio, { volume, rate, duration = 2500 }) {
+            const startVolume = audio.volume;
+            const startRate = audio.playbackRate;
+            const steps = Math.max(1, Math.floor(duration / 100));
+            let step = 0;
+            const interval = setInterval(() => {
+                step++;
+                const t = Math.min(step / steps, 1);
+                if (volume !== undefined) audio.volume = startVolume + (volume - startVolume) * t;
+                if (rate !== undefined) audio.playbackRate = startRate + (rate - startRate) * t;
+                if (t >= 1) clearInterval(interval);
+            }, 100);
+        }
+
+        // ============ Story Timeline ============
         const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-        const storyLines = [
-            "Five months ago, a spark lit up the dark.",
-            "I found my angel, and my entire gravity shifted.",
-            "Since then, time has felt like the tide...",
-            "...steady, deep, and pulling me closer to you.",
-            "I know you are stuck in bed tonight.",
-            "So I built this quiet place for you to rest.",
-            "Close your eyes. Listen to the water.",
-            "Every passing month is a step toward our future.",
-            "Happy 5 Months, Pia.",
-            "I'll see you in Italy."
-        ];
+        // Add as many lines as you like here — the closing card always
+        // appears automatically once the last line in this list has faded out.
+        const storyLinesEn = [
+    "Five months ago, a spark lit up the dark",
+    "I found my angel, and my entire life became complete",
+    "Since then, time has felt like the tide...",
+    "...steady, deep, and pulling me closer to you",
+    "I know you are stuck in bed tonight",
+    "So I built this quiet place for you to rest",
+    "Close your eyes. Listen to the rhythm",
+    "Every passing month is a step toward our future",
+    "in the span of 5 months, what i learned wasn't you",
+    "it was what defined your grace and your being",
+    "at first i fell for your soul, then your body",
+    "the more i got to know you. the more i came to love you",
+    "to the point that each passing day, i love you more than yesterday",
+    "i desired nothing from life, yet you became my whole life",
+    "this month too i promise you, to forever keep loving you",
+    "what was my life before you? i can't remember, do you?",
+    "i swear to you that you gave my life meaning",
+    "to the point you became a part of my being",
+    "i can't promise the world, but i promise to make you sway",
+    "i love you more than yesterday, i say this since the first day",
+    "we have many plans for the future, i look forward to them all",
+    "living in a foreign land, having no one else but each other",
+    "living in our house and making each other complete",
+    "standing tall against the world, i have your back, and you have mine",
+    "living the life solely for us, until we surely had fun",
+    "traveling the world, hand in hand. seeing what we dreamed about",
+    "italy, japan, kurdistan, argentina, and even more",
+    "working hard for ourselves, helping each other",
+    "we improve, we get learn, we try, we succeed, together",
+    "we fall sick, we lay down, we rest, we help one another",
+    "until the distance is just a memory we look back on",
+    "no more goodbyes through a glowing screen",
+    "only soft goodmornings whispered right next to you",
+    "i will hold you on the days you feel weak",
+    "and celebrate you on the days you conquer the world",
+    "building a sanctuary where it is just you and me",
+    "five months is beautiful, but a lifetime is what i seek",
+    "with every breath, every heartbeat, i am completely yours",
+    "so rest now, my love. close your eyes and feel my love",
+    "i am right here with you, always and forever",
+    "forever and ever i am yours"
+];
 
+        const storyLinesEs = [
+    "hace cinco meses, una chispa iluminó la oscuridad",
+    "encontré a mi ángel, y toda mi vida se completó",
+    "desde entonces, el tiempo se siente como la marea...",
+    "...constante, profunda, y que me acerca cada vez más a vos",
+    "sé que esta noche estás en cama",
+    "por eso construí este lugar tranquilo para que descanses",
+    "cerrá los ojos. escuchá el ritmo",
+    "cada mes que pasa es un paso hacia nuestro futuro",
+    "en el transcurso de 5 meses, lo que aprendí no fuiste vos",
+    "fue lo que definió tu gracia y tu esencia",
+    "al principio me enamoré de tu alma, después de tu cuerpo",
+    "cuanto más te conocía, más llegué a amarte",
+    "al punto de que cada día que pasa, te amo más que ayer",
+    "no deseaba nada de la vida, y aun así te convertiste en toda mi vida",
+    "este mes también te prometo, seguir amándote para siempre",
+    "¿qué era mi vida antes de vos? no me acuerdo, ¿y vos?",
+    "te juro que le diste sentido a mi vida",
+    "al punto de convertirte en parte de mi ser",
+    "no puedo prometerte el mundo, pero prometo hacerte bailar",
+    "te amo más que ayer, digo esto desde el primer día",
+    "tenemos muchos planes para el futuro, espero con ansias cada uno",
+    "viviendo en tierra extraña, sin nadie más que el uno al otro",
+    "viviendo en nuestra casa y completándonos el uno al otro",
+    "de pie contra el mundo, yo te cuido la espalda, y vos la mía",
+    "viviendo la vida solo para nosotros, hasta divertirnos de verdad",
+    "viajando por el mundo, de la mano, viendo lo que soñamos",
+    "italia, japón, kurdistán, argentina, y muchos más",
+    "trabajando duro para nosotros, ayudándonos mutuamente",
+    "mejoramos, aprendemos, lo intentamos, lo logramos, juntos",
+    "nos enfermamos, nos acostamos, descansamos, nos ayudamos el uno al otro",
+    "hasta que la distancia sea solo un recuerdo al que miremos atrás",
+    "no más despedidas a través de una pantalla iluminada",
+    "solo suaves buenos días susurrados justo a tu lado",
+    "te voy a abrazar en los días que te sientas débil",
+    "y celebrarte en los días que conquistes el mundo",
+    "construyendo un santuario donde solo estamos vos y yo",
+    "cinco meses es hermoso, pero una vida entera es lo que busco",
+    "con cada respiro, cada latido, soy completamente tuyo",
+    "así que descansá ahora, mi amor. cerrá los ojos y sentí mi amor",
+    "estoy aquí mismo con vos, siempre y para siempre",
+    "por siempre y para siempre soy tuyo"
+];
+
+        // ============ Language content + switching ============
+        const translations = {
+            en: {
+                eyebrowNum: "five",
+                eyebrowRest: "months together",
+                title: "Happy Monthsary",
+                sub: "a quiet place, just for you",
+                enter: "Feel My Sincere Love",
+                storyLines: storyLinesEn,
+                closingEyebrow: "i'll die for you",
+                closingTitle: "Until the next month, my true love.",
+                closingSub: "— I Love You, Pia",
+                replay: "Replay",
+                envelopeLabel: "Open the letter",
+                letterCloseLabel: "Close letter",
+                letterParas: [
+                    "My Pia,",
+                    "Five months in, and I still catch myself smiling at my phone like an idiot when your name pops up. I don't think that's going to stop anytime soon.",
+                    "I built this whole quiet corner of the internet because I wanted you to have somewhere to land on a night when you're stuck in bed and everything feels heavier than it should. I wanted you to close your eyes and feel like I was right there next to you, even from far away.",
+                    "Thank you for five months of choosing this, choosing us, even when it's hard. I don't take that lightly.",
+                    "I'll see you soon. and I'll see you in my Dreams.",
+                    "Always yours, Pia"
+                ]
+            },
+            es: {
+                eyebrowNum: "cinco",
+                eyebrowRest: "meses juntos",
+                title: "Feliz Mesiversario",
+                sub: "un lugar tranquilo, solo para vos",
+                enter: "Sentí Mi Amor Sincero",
+                storyLines: storyLinesEs,
+                closingEyebrow: "moriría por vos",
+                closingTitle: "Hasta el próximo mes, mi verdadero amor.",
+                closingSub: "— Te amo, Pia",
+                replay: "Repetir",
+                envelopeLabel: "Abrir la carta",
+                letterCloseLabel: "Cerrar carta",
+                letterParas: [
+                    "Mi Pia,",
+                    "Cinco meses ya, y todavía me sorprendo sonriéndole al teléfono como un idiota cuando aparece tu nombre. No creo que eso vaya a parar pronto.",
+                    "Construí todo este rincón tranquilo de internet porque quería que tuvieras un lugar donde aterrizar en una noche en la que estás en cama y todo se siente más pesado de lo que debería. Quería que cerraras los ojos y sintieras que estaba ahí, justo a tu lado, aunque estemos lejos.",
+                    "Gracias por cinco meses de elegir esto, de elegirnos, incluso cuando es difícil. No lo doy por sentado.",
+                    "Nos vemos pronto. Y te veo en mis sueños.",
+                    "Siempre tuyo, Pia"
+                ]
+            }
+        };
+
+        let selectedLang = 'en';
+
+        function applyTranslations(lang) {
+            const t = translations[lang];
+            document.documentElement.lang = lang;
+
+            document.querySelector('#landing .eyebrow').innerHTML =
+                `<span class="num">${t.eyebrowNum}</span> &nbsp;·&nbsp; ${t.eyebrowRest}`;
+            document.querySelector('#landing .landing-title').textContent = t.title;
+            document.querySelector('#landing .landing-sub').textContent = t.sub;
+            document.getElementById('enterBtn').innerHTML = `${t.enter}<span class="rule"></span>`;
+
+            document.querySelector('.closing-eyebrow').textContent = t.closingEyebrow;
+            document.getElementById('closingTitle').textContent = t.closingTitle;
+            document.querySelector('.closing-sub').textContent = t.closingSub;
+            document.getElementById('replayBtn').innerHTML = `${t.replay}<span class="rule"></span>`;
+            document.getElementById('envelopeBtn').setAttribute('aria-label', t.envelopeLabel);
+            document.getElementById('envelopeBtn').setAttribute('title', t.envelopeLabel);
+            document.getElementById('letterClose').setAttribute('aria-label', t.letterCloseLabel);
+
+            const letterTextEl = document.querySelector('.letter-text');
+            letterTextEl.innerHTML = t.letterParas
+                .map((p, i) => i === t.letterParas.length - 1 ? `<p class="signature">${p}</p>` : `<p>${p}</p>`)
+                .join('');
+        }
+
+        document.querySelectorAll('.globe-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                selectedLang = this.dataset.lang;
+                applyTranslations(selectedLang);
+
+                const langSelect = document.getElementById('lang-select');
+                langSelect.classList.add('leaving');
+                setTimeout(() => { langSelect.style.display = 'none'; }, 1300);
+
+                document.getElementById('landing').classList.remove('awaiting-language');
+            });
+        });
+
+        // ============ Begin click ============
+        let hasBegun = false;
         document.getElementById('enterBtn').addEventListener('click', async function() {
-            this.style.opacity = '0';
-            this.style.pointerEvents = 'none';
-            
-            document.getElementById('door-left').classList.add('open');
-            document.getElementById('door-right').classList.add('open');
+            const landing = document.getElementById('landing');
+            landing.classList.add('leaving');
 
-            // CRASH-PROOF: We catch the error if your browser blocks the video, so the script doesn't die.
-            bgVideo.play().catch(e => console.warn("Video blocked locally, but story will continue."));
-            bgVideo.style.filter = 'blur(0px)';
+            // A barely-there chime, once, to confirm something is starting
+            if (!hasBegun) {
+                hasBegun = true;
+                const chime = document.getElementById('chimeSound');
+                try {
+                    chime.volume = 0.22;
+                    chime.play();
+                } catch (error) {
+                    console.log("Chime skipped or missing.");
+                }
+            }
 
-            initParticles();
+            // stop the landing ember canvas once it's fully faded out
+            setTimeout(() => {
+                landingEmbers.stop();
+                landing.style.display = 'none';
+            }, 1700);
+
+            // Fade in the video (try/catch so it never crashes)
+            const bgVideo = document.getElementById('cinematic-bg');
+            try {
+                bgVideo.play();
+                bgVideo.style.opacity = '0.7';
+                bgVideo.style.filter = 'blur(0px)';
+            } catch (error) {
+                console.log("Video skipped or missing.");
+            }
+
+            // Start dust particles
             animateParticles();
             canvas.style.opacity = '1';
 
+            // Bring the ambient track up into its "story" mood: fuller volume, normal pitch
             const audio = document.getElementById('ambientAudio');
-            audio.volume = 0;
-            // CRASH-PROOF: Same for audio
-            audio.play().catch(e => console.warn("Audio blocked locally, but story will continue."));
-            
-            let fadeInterval = setInterval(() => {
-                if (audio.volume < 0.4) {
-                    audio.volume = Math.min(audio.volume + 0.02, 0.4);
-                } else {
-                    clearInterval(fadeInterval);
-                }
-            }, 200);
+            try {
+                audio.volume = 0;
+                audio.playbackRate = 1;
+                audio.play();
+                rampAudio(audio, { volume: 0.4, rate: 1, duration: 3000 });
+            } catch (error) {
+                console.log("Audio skipped or missing.");
+            }
 
-            setTimeout(() => {
-                document.getElementById('doors-container').style.display = 'none';
-            }, 4000);
+            // Start Text Sequence after landing has fully dissolved
+            await sleep(2200);
 
-            await sleep(3500); 
-            
             const textBox = document.getElementById('story-text');
-            
-            for (let line of storyLines) {
-                textBox.innerHTML = line;
+            const activeLines = translations[selectedLang].storyLines;
+
+            for (let i = 0; i < activeLines.length; i++) {
+                textBox.innerHTML = activeLines[i];
                 textBox.classList.add('visible');
-                
-                await sleep(5000); 
-                
+
+                if (photoCues[i]) showPhoto(photoCues[i]);
+
+                await sleep(5000); // 5 seconds on screen
+
                 textBox.classList.remove('visible');
-                
-                await sleep(2500); 
+                if (photoCues[i] && !photoCues[i + 1]) hidePhoto();
+
+                await sleep(2000); // 2 seconds fading in dark
+            }
+
+            // ============ Ending: fade the video out and bring in the closing card ============
+            bgVideo.style.opacity = '0';
+            canvas.style.opacity = '0'; // dust particles
+            hidePhoto();
+
+            // Ease the music into a calmer, slightly lower "closing" mood
+            try {
+                rampAudio(audio, { volume: 0.26, rate: 0.93, duration: 3500 });
+            } catch (error) {
+                console.log("Audio ramp skipped.");
+            }
+
+            await sleep(3200); // let the video/particles fully dissolve
+
+            bgVideo.pause();
+
+            const closing = document.getElementById('closing');
+            closing.classList.add('visible');
+            closingEmbers.start();
+        });
+
+        // ============ Replay ============
+        document.getElementById('replayBtn').addEventListener('click', function() {
+            location.reload();
+        });
+
+        // ============ Letter ============
+        document.getElementById('envelopeBtn').addEventListener('click', function() {
+            document.getElementById('letter-overlay').classList.add('visible');
+        });
+        document.getElementById('letterClose').addEventListener('click', function() {
+            document.getElementById('letter-overlay').classList.remove('visible');
+        });
+        document.getElementById('letter-overlay').addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('visible');
+        });
+
+        // ============ Landing mood: a soft attempt at ambience before Begin ============
+        // Browsers usually block audible autoplay before any interaction, so this
+        // is a best-effort touch — the audio still starts reliably on Begin either way.
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('landingPhoto').classList.add('visible');
+
+            const audio = document.getElementById('ambientAudio');
+            try {
+                audio.volume = 0;
+                audio.playbackRate = 1.05; // a touch brighter/lighter for the landing mood
+                audio.play().then(() => {
+                    rampAudio(audio, { volume: 0.12, rate: 1.05, duration: 2500 });
+                }).catch(() => {});
+            } catch (error) {
+                // silently ignore — Begin click will start it properly
             }
         });
     </script>
